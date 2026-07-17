@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import csv
 import json
-import io
 import math
-from datetime import datetime, date
+from datetime import datetime
 from typing import Any, Optional
 from pathlib import Path
 
@@ -94,10 +93,12 @@ def _parse_numeric(value: Any) -> Optional[float]:
 
 
 def _calculate_outliers(q1: float, q3: float, iqr: float) -> int:
-    """Count outliers using IQR method."""
-    lower_bound = q1 - 1.5 * iqr
-    upper_bound = q3 + 1.5 * iqr
-    return 0  # Placeholder — actual counting done in profiler
+    """Count outliers using IQR method.
+    
+    Note: Actual outlier counting is done inline in the column analysis.
+    This function is kept for potential future use.
+    """
+    return 0
 
 
 class DataProfiler:

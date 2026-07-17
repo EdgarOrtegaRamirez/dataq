@@ -10,7 +10,6 @@ import pytest
 from click.testing import CliRunner
 
 from dataq.cli import main
-from dataq.profiler import DataProfiler
 
 
 @pytest.fixture

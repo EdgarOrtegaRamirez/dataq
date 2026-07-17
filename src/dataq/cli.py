@@ -9,7 +9,6 @@ from pathlib import Path
 import click
 
 from dataq import __version__
-from dataq.models import ProfileResult
 from dataq.profiler import DataProfiler
 
 
@@ -147,8 +146,8 @@ def _output_markdown(result: object, output: str | None) -> None:
         "",
         "## Summary",
         "",
-        f"| Metric | Score |",
-        f"|--------|-------|",
+        "| Metric | Score |",
+        "|--------|-------|",
         f"| **Overall Quality** | {data.get('overall_score', 0):.1f}/100 |",
         f"| Completeness | {data.get('completeness_score', 0):.1f}/100 |",
         f"| Validity | {data.get('validity_score', 0):.1f}/100 |",
