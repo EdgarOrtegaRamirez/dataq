@@ -14,7 +14,7 @@ dependencies = [
     "click>=8.1.7,<9.0.0",
     "pydantic>=2.6.0,<3.0.0",
     "numpy>=1.26.0,<2.2.0",
-    "rich>=13.7.0,<14.0.0",
+    "rich>=13.7.0,<16.0.0",
 ]
 
 [project.optional-dependencies]
