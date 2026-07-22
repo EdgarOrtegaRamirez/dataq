@@ -19,12 +19,12 @@ def profiler():
 
 @pytest.fixture
 def clean_csv(profiler):
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
         writer = csv.writer(f)
-        writer.writerow(['name', 'age', 'city'])
-        writer.writerow(['Alice', '30', 'NYC'])
-        writer.writerow(['Bob', '25', 'LA'])
-        writer.writerow(['Carol', '35', 'CHI'])
+        writer.writerow(["name", "age", "city"])
+        writer.writerow(["Alice", "30", "NYC"])
+        writer.writerow(["Bob", "25", "LA"])
+        writer.writerow(["Carol", "35", "CHI"])
         path = f.name
     yield path
     os.unlink(path)
@@ -32,15 +32,15 @@ def clean_csv(profiler):
 
 @pytest.fixture
 def dirty_csv(profiler):
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
         writer = csv.writer(f)
-        writer.writerow(['name', 'age', 'salary'])
-        writer.writerow(['Alice', '30', '50000'])
-        writer.writerow(['Bob', '', '60000'])
-        writer.writerow(['Carol', '35', '70000'])
-        writer.writerow(['Dave', 'not_a_number', '80000'])
-        writer.writerow(['Alice', '30', '50000'])  # duplicate
-        writer.writerow(['Eve', '28', '45000'])
+        writer.writerow(["name", "age", "salary"])
+        writer.writerow(["Alice", "30", "50000"])
+        writer.writerow(["Bob", "", "60000"])
+        writer.writerow(["Carol", "35", "70000"])
+        writer.writerow(["Dave", "not_a_number", "80000"])
+        writer.writerow(["Alice", "30", "50000"])  # duplicate
+        writer.writerow(["Eve", "28", "45000"])
         path = f.name
     yield path
     os.unlink(path)
@@ -48,12 +48,12 @@ def dirty_csv(profiler):
 
 @pytest.fixture
 def empty_column_csv(profiler):
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
         writer = csv.writer(f)
-        writer.writerow(['name', 'empty_col'])
-        writer.writerow(['Alice', ''])
-        writer.writerow(['Bob', ''])
-        writer.writerow(['Carol', ''])
+        writer.writerow(["name", "empty_col"])
+        writer.writerow(["Alice", ""])
+        writer.writerow(["Bob", ""])
+        writer.writerow(["Carol", ""])
         path = f.name
     yield path
     os.unlink(path)
@@ -66,7 +66,7 @@ def json_data(profiler):
         {"id": 2, "name": "Bob", "score": 87.3},
         {"id": 3, "name": "Carol", "score": None},
     ]
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(data, f)
         path = f.name
     yield path
@@ -122,14 +122,14 @@ class TestCleanDataset:
         data = profiler.load_file(Path(clean_csv))
         profile = profiler.profile(data, file_path=clean_csv)
 
-        age_col = [cs for cs in profile.column_stats if cs.name == 'age'][0]
+        age_col = [cs for cs in profile.column_stats if cs.name == "age"][0]
         assert age_col.column_type == ColumnType.INTEGER
 
     def test_name_column_detected_as_string(self, profiler, clean_csv):
         data = profiler.load_file(Path(clean_csv))
         profile = profiler.profile(data, file_path=clean_csv)
 
-        name_col = [cs for cs in profile.column_stats if cs.name == 'name'][0]
+        name_col = [cs for cs in profile.column_stats if cs.name == "name"][0]
         assert name_col.column_type == ColumnType.STRING
 
 
@@ -146,14 +146,14 @@ class TestDirtyDataset:
         data = profiler.load_file(Path(dirty_csv))
         profile = profiler.profile(data, file_path=dirty_csv)
 
-        age_col = [cs for cs in profile.column_stats if cs.name == 'age'][0]
+        age_col = [cs for cs in profile.column_stats if cs.name == "age"][0]
         assert age_col.missing_count == 1  # Bob's age is empty
 
     def test_duplicate_row_detected(self, profiler, dirty_csv):
         data = profiler.load_file(Path(dirty_csv))
         profile = profiler.profile(data, file_path=dirty_csv)
 
-        duplicate_issues = [i for i in profile.issues if 'duplicate' in i.message.lower()]
+        duplicate_issues = [i for i in profile.issues if "duplicate" in i.message.lower()]
         assert len(duplicate_issues) >= 1
 
 
@@ -162,14 +162,14 @@ class TestEmptyColumn:
         data = profiler.load_file(Path(empty_column_csv))
         profile = profiler.profile(data, file_path=empty_column_csv)
 
-        empty_issues = [i for i in profile.issues if 'empty' in i.message.lower()]
+        empty_issues = [i for i in profile.issues if "empty" in i.message.lower()]
         assert len(empty_issues) >= 1
 
     def test_empty_column_has_critical_severity(self, profiler, empty_column_csv):
         data = profiler.load_file(Path(empty_column_csv))
         profile = profiler.profile(data, file_path=empty_column_csv)
 
-        empty_issues = [i for i in profile.issues if 'empty' in i.message.lower()]
+        empty_issues = [i for i in profile.issues if "empty" in i.message.lower()]
         assert any(i.severity == Severity.CRITICAL for i in empty_issues)
 
 
@@ -185,7 +185,7 @@ class TestJsonDataset:
         data = profiler.load_file(Path(json_data))
         profile = profiler.profile(data, file_path=json_data)
 
-        score_col = [cs for cs in profile.column_stats if cs.name == 'score'][0]
+        score_col = [cs for cs in profile.column_stats if cs.name == "score"][0]
         assert score_col.missing_count == 1
 
 
@@ -194,7 +194,7 @@ class TestNumericStats:
         data = profiler.load_file(Path(clean_csv))
         profile = profiler.profile(data, file_path=clean_csv)
 
-        age_col = [cs for cs in profile.column_stats if cs.name == 'age'][0]
+        age_col = [cs for cs in profile.column_stats if cs.name == "age"][0]
         assert age_col.mean == 30.0
         assert age_col.min_val == 25.0
         assert age_col.max_val == 35.0
@@ -204,7 +204,7 @@ class TestNumericStats:
         data = profiler.load_file(Path(clean_csv))
         profile = profiler.profile(data, file_path=clean_csv)
 
-        age_col = [cs for cs in profile.column_stats if cs.name == 'age'][0]
+        age_col = [cs for cs in profile.column_stats if cs.name == "age"][0]
         assert age_col.std_dev is not None
 
 
@@ -220,9 +220,9 @@ class TestEmptyDataset:
 class TestOutlierDetection:
     def test_outliers_detected_in_data_with_extreme_value(self, profiler):
         # Create CSV with outlier
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
             writer = csv.writer(f)
-            writer.writerow(['id', 'value'])
+            writer.writerow(["id", "value"])
             writer.writerow([1, 10])
             writer.writerow([2, 11])
             writer.writerow([3, 10])
@@ -239,7 +239,7 @@ class TestOutlierDetection:
             data = profiler.load_file(Path(path))
             profile = profiler.profile(data, file_path=path)
 
-            value_col = [cs for cs in profile.column_stats if cs.name == 'value'][0]
+            value_col = [cs for cs in profile.column_stats if cs.name == "value"][0]
             assert value_col.outliers > 0
         finally:
             os.unlink(path)
@@ -247,7 +247,7 @@ class TestOutlierDetection:
 
 class TestFileTypeDetection:
     def test_jsonl_load(self, profiler):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.jsonl', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f:
             f.write('{"id": 1, "val": 100}\n')
             f.write('{"id": 2, "val": 200}\n')
             f.write('{"id": 3, "val": 300}\n')
@@ -261,7 +261,7 @@ class TestFileTypeDetection:
             os.unlink(path)
 
     def test_unsupported_extension(self, profiler):
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.xlsx', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".xlsx", delete=False) as f:
             f.write("not supported")
             path = f.name
 
